@@ -28,9 +28,10 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+            database.Categorias.ToList();
             var produtos = database.Produtos.ToList();
             List<ProdutoContainer> produtosHateoas = new List<ProdutoContainer>();
-            foreach(var prod in produtos)
+            foreach (var prod in produtos)
             {
                 ProdutoContainer produtoHateoas = new ProdutoContainer();
                 produtoHateoas.produto = prod;
@@ -46,6 +47,7 @@ namespace API.Controllers
             try
             {
                 Produto produto = database.Produtos.First(x => x.ProdutoId == id);
+                database.Categorias.ToList();
                 ProdutoContainer produtoHatoeas = new ProdutoContainer();
                 produtoHatoeas.produto = produto;
                 produtoHatoeas.links = Hateoas.GetActions(produto.ProdutoId.ToString());
@@ -77,8 +79,10 @@ namespace API.Controllers
 
             Produto p = new Produto();
 
+            database.Categorias.ToList();
             p.Nome = pTemp.Nome;
             p.Preco = pTemp.Preco;
+            p.Categoria = database.Categorias.First(x => x.CategoriaId == pTemp.categoria.CategoriaId);
             database.Produtos.Add(p);
             database.SaveChanges();
 
@@ -111,12 +115,25 @@ namespace API.Controllers
                 try
                 {
                     var p = database.Produtos.First(x => x.ProdutoId == produto.ProdutoId);
+                    database.Categorias.ToList();
 
                     if (p != null)
                     {
+                        if (produto.Preco <= 0)
+                        {
+                            Response.StatusCode = 400;
+                            return new ObjectResult(new { msg = "Preço não pode ser negativo nem 0." });
+                        }
+
+                        if (produto.Nome.Length <= 1)
+                        {
+                            Response.StatusCode = 400;
+                            return new ObjectResult(new { msg = "Nome precisa de mais de 1 caracter." });
+                        }
                         //Editar
                         p.Nome = produto.Nome != null ? produto.Nome : p.Nome;
                         p.Preco = produto.Preco != 0 ? produto.Preco : p.Preco;
+                        p.Categoria = database.Categorias.First(x => x.CategoriaId == produto.Categoria.CategoriaId);
 
                         database.SaveChanges();
                         return Ok();
@@ -144,6 +161,7 @@ namespace API.Controllers
         {
             public string Nome { get; set; }
             public float Preco { get; set; }
+            public Categoria categoria { get; set; }
         }
 
         public class ProdutoContainer
