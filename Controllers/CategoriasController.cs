@@ -5,11 +5,13 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using API.Hateoas;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class CategoriasController : ControllerBase
     {
         private readonly Data.ApplicationDbContext database;
@@ -23,6 +25,12 @@ namespace API.Controllers
             Hateoas.AddAction("DELETE_PRODUCT", "DELETE");
             Hateoas.AddAction("EDIT_PRODUCT", "PATCH");
 
+        }
+
+        [HttpGet("teste")]
+        public IActionResult TesteClaims()
+        {
+            return Ok(HttpContext.User.Claims.First(claim => claim.Type.ToString().Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value);
         }
 
         [HttpGet]
@@ -61,28 +69,36 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] CategoriaTemp ctemp)
         {
-            // validation
-            if (ctemp.Nome.Length <= 3)
+            try
             {
-                Response.StatusCode = 400;
-                return new ObjectResult(new { msg = "Nome precisa de mais de 3 caracteres." });
-            }
+                // validation
+                if (ctemp.Nome.Length <= 3)
+                {
+                    Response.StatusCode = 400;
+                    return new ObjectResult(new { msg = "Nome precisa de mais de 3 caracteres." });
+                }
 
-            if (ctemp.Descricao.Length <= 3)
+                if (ctemp.Descricao.Length <= 3)
+                {
+                    Response.StatusCode = 400;
+                    return new ObjectResult(new { msg = "Descrição precisa de mais de 3 caracteres." });
+                }
+
+                Categoria c = new Categoria();
+
+                c.Nome = ctemp.Nome;
+                c.Descricao = ctemp.Descricao;
+                database.Categorias.Add(c);
+                database.SaveChanges();
+
+                Response.StatusCode = 201;
+                return new ObjectResult("");
+            }
+            catch (Exception)
             {
-                Response.StatusCode = 400;
-                return new ObjectResult(new { msg = "Descrição precisa de mais de 3 caracteres." });
+                Response.StatusCode = 404;
+                return new ObjectResult("");
             }
-
-            Categoria c = new Categoria();
-
-            c.Nome = ctemp.Nome;
-            c.Descricao = ctemp.Descricao;
-            database.Categorias.Add(c);
-            database.SaveChanges();
-
-            Response.StatusCode = 201;
-            return new ObjectResult("");
         }
 
         [HttpDelete("{id}")]

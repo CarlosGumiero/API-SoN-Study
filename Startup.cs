@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -29,6 +32,23 @@ namespace API
             services.AddDbContext<ApplicationDbContext>(c => c.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
 
+            string chaveDeSeguranca = "A_barata_da_vizinha_ta_na_minha_cama.";  //Chave de segurança
+            var chaveSimetrica = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveDeSeguranca));
+            //Usando o JWT como forme de autenticação
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
+            {
+                //Como o sistgema vai ler o token
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "MercadoAPI.com",
+                    ValidAudience = "usuario",
+                    IssuerSigningKey = chaveSimetrica
+                };
+            });
+
             //Swagger
             services.AddSwaggerGen(config =>
             {
@@ -45,6 +65,8 @@ namespace API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication(); //Aplica o sistema de autenticação na aplicação
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -57,7 +79,7 @@ namespace API
             app.UseSwagger(); // gera um arquivo json - Swagger.Json
             app.UseSwaggerUI(config => //Views HTML do Swagger
             {
-                config.SwaggerEndpoint("/swagger/v1/swagger.json","v1 docs");
+                config.SwaggerEndpoint("/swagger/v1/swagger.json", "v1 docs");
             });
         }
     }

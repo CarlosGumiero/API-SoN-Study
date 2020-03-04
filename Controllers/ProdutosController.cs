@@ -5,11 +5,13 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using API.Hateoas;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProdutosController : ControllerBase
     {
         private readonly Data.ApplicationDbContext database;

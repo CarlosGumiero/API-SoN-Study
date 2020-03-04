@@ -43,3 +43,10 @@ C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagg
 C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\CLGS\Documents\API\obj\Debug\netcoreapp3.1\API.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\CLGS\Documents\API\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
